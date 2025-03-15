@@ -1,6 +1,6 @@
 # <p align="center">IntelliCure - Team Citadel</p>
 
-<p align="center"><img src="assets/logo.svg" width="350px"/></p>
+<p align="center"><img src="ui/src/assets/icon.svg" width="350px"/></p>
 <p align="center">This repository consists of our project for CEC 2025's programming division. Our project addresses this years CEC topic of Ethical Engineering, aiming to promote sustainablity and longevity in engineering solutions.</p>
 
 ## 🧭 Table of Contents
