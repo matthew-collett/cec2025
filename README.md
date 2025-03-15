@@ -26,10 +26,6 @@
 
 ## 🏗️ Directory Structure
 
-# Directory Structure
-
-## Key Directories
-
 ```
 .
 ├── api                  # Backend API code
@@ -52,7 +48,7 @@
         └── types        # TypeScript type definitions
 ```
 
-# 🚀 Local Run
+## 🚀 Local Run
 
 ## Prerequisites
 
@@ -92,22 +88,27 @@ brew install yarn
 
 1. Clone the repository
 
-   ```bash
-   git clone https://github.com/matthew-collett/cec2025.git
-   cd cec2025
-   ```
+```bash
+git clone https://github.com/matthew-collett/cec2025.git
+```
 
-2. Place the provided environment files in their respective directories:
+2. Navigate to the project directory
+
+```bash
+cd cec2025
+```
+
+3. Place the provided environment files in their respective directories:
 
    - Place the `api/.env` file in the root of the `api` directory
    - Place the `ui/.env` file in the root of the `ui` directory
 
-3. Place the Firebase service account key file:
+4. Place the Firebase service account key file:
    - Copy the provided `firebase-service-account.json` file to the root of the `api` directory. Make sure it is named the same as `firebase-service-account.json`
 
 These configuration files contain necessary credentials and settings required for the application to function properly.
 
-4. Set up the project (installs all dependencies)
+5. Set up the project (installs all dependencies)
    ```bash
    make setup
    ```
@@ -136,7 +137,7 @@ API will be available at http://localhost:5000
 make run
 ```
 
-## Other Useful Commands
+### Other Useful Commands
 
 ```bash
 # Stop running API processes
