@@ -12,7 +12,7 @@ import { ModelInfo } from '@/types'
 
 // Mock data for development
 const mockModelInfo: ModelInfo = {
-  accuracy: 0.92,
+  accuracy: 0.91,
   precision: 0.89,
   recall: 0.94,
   f1: 0.91,
@@ -21,16 +21,15 @@ const mockModelInfo: ModelInfo = {
   fp: 35,
   fn: 25,
   history: [
-    { epoch: 1, accuracy: 0.6829, loss: 0.593 },
-    { epoch: 2, accuracy: 0.8491, loss: 0.3503 },
-    { epoch: 3, accuracy: 0.925, loss: 0.1891 },
+    { epoch: 1, accuracy: 0.7999, loss: 0.4541 },
+    { epoch: 2, accuracy: 0.8929, loss: 0.2743 },
+    { epoch: 3, accuracy: 0.9301, loss: 0.1878 },
     { epoch: 4, accuracy: 0.9429, loss: 0.1601 },
-    { epoch: 5, accuracy: 0.9793, loss: 0.0535 },
-    { epoch: 6, accuracy: 0.9838, loss: 0.0468 },
-    { epoch: 7, accuracy: 0.9887, loss: 0.0345 },
-    { epoch: 8, accuracy: 0.9927, loss: 0.0237 },
-    { epoch: 9, accuracy: 0.9902, loss: 0.0283 },
-    { epoch: 10, accuracy: 0.9899, loss: 0.0316 },
+    { epoch: 5, accuracy: 0.9432, loss: 0.197 },
+    { epoch: 6, accuracy: 0.9469, loss: 0.1492 },
+    { epoch: 7, accuracy: 0.95, loss: 0.184 },
+    { epoch: 8, accuracy: 0.9486, loss: 0.2119 },
+    { epoch: 9, accuracy: 0.9121, loss: 0.3963 },
   ],
 }
 

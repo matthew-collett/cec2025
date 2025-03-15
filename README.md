@@ -100,13 +100,15 @@ cd cec2025
 
 3. Place the provided environment files in their respective directories:
 
-   - Place the `api/.env` file in the root of the `api` directory
-   - Place the `ui/.env` file in the root of the `ui` directory
+   - In the root of `api/` directory, create a new file named `.env` and paste in the provided api credentials. Make sure to save the file
+   - In the root of `ui/` directory, create a new file named `.env` and paste in the provided firebase credentials. Make sure to save the file
 
 4. Place the Firebase service account key file:
    - Copy the provided `firebase-service-account.json` file to the root of the `api` directory. Make sure it is named the same as `firebase-service-account.json`
 
 These configuration files contain necessary credentials and settings required for the application to function properly.
+
+Now, make sure you are in root directory (`cec2025`) before running. In other words, the same directory as the `Makefile`
 
 5. Set up the project (installs all dependencies)
    ```bash

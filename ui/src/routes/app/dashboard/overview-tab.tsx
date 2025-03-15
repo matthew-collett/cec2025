@@ -71,7 +71,7 @@ export const OverviewTab = ({ modelInfo }: { modelInfo: ModelInfo }) => {
       <Card>
         <CardHeader>
           <CardTitle>Training Progress</CardTitle>
-          <CardDescription>Model accuracy and loss</CardDescription>
+          <CardDescription>Model accuracy and loss on validation data</CardDescription>
         </CardHeader>
         <CardContent>
           <ChartContainer config={chartConfig}>
