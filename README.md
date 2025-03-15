@@ -17,122 +17,131 @@
 
 ## 👥 Team
 
-| Team Member     | Role Title                     | Description                                                                                                                                             |
-| --------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Matthew Collett | Frontend Developer             | Focus on architecture design and solving complex problems, with a focus on the micro-batching process.                                                  |
-| Cooper Dickson  | Project Manager/Developer      | Ensure that the scope and timeline are feasible and overview project status, focus on UI and real-time transmission.                                    |
-| Alex Groom      | Backend and Database Developer | In charge of agile methods for the team such as organizing meetings, removing blockers, and team communication, focus on UI and web socket interaction. |
-| Aidan Foster    | Product Owner/Developer        | Manager of product backlog and updating board to reflect scope changes and requirements, focus on database operations and schema design.                |
-|                 |
+| Name            | Role                       |
+| --------------- | -------------------------- |
+| Matthew Collett | Frontend Developer         |
+| Cooper Dickson  | Backend/AI Developer       |
+| Alex Groom      | Backend/Database Developer |
+| Aidan Foster    | Backend/AI Developer       |
 
 ## 🏗️ Directory Structure
 
-## 🚀 Local Run
+# Directory Structure
 
-### Prerequisites
+## Key Directories
 
-- **Node.js** and **Yarn** must be installed on your machine. You can verify if you have these by running the following commands
+```
+.
+├── api                  # Backend API code
+│   ├── app
+│   │   ├── blueprints   # API route definitions
+│   │   ├── logic        # Business logic and model implementation
+│   │   ├── middlewares  # Request/response middleware
+│   │   └── services     # External service integrations
+│   └── temp_uploads     # Temporary file storage
+└── ui                   # Frontend code
+    ├── public           # Static assets
+    └── src
+        ├── assets       # Images, icons, etc.
+        ├── components   # Reusable UI components
+        ├── context      # React context providers
+        ├── hooks        # Custom React hooks
+        ├── layouts      # Page layout components
+        ├── lib          # Utility functions and helpers
+        ├── routes       # Application routes and pages
+        └── types        # TypeScript type definitions
+```
+
+# 🚀 Local Run
+
+## Prerequisites
+
+- **Python 3.10**
+- **Node.js** and **Yarn**
+
+### Verifying installations
 
 ```bash
+python --version  # Should be 3.10.x
 node -v
 yarn -v
-nvm -v  # For Windows, use 'nvm version'
 ```
+
+### Installing prerequisites
 
 #### Windows
 
-- You can download Node.js from the official [Node.js website](https://nodejs.org/en)
-- After installing Node.js, install Node Version Manager (`nvm`) by following [this guide](https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/)
-- After installing Node.js, install Yarn by running
-
-```bash
-npm install -g yarn
-```
+- Download Python 3.10 from the [official website](https://www.python.org/downloads/release/python-3100/)
+- Download Node.js from the [official website](https://nodejs.org/)
+- Install Yarn: `npm install -g yarn`
 
 #### macOS
 
-- On macOS, you can install Node.js via Homebrew
-
 ```bash
+# Install Python 3.10
+brew install python@3.10
+
+# Install Node.js
 brew install node
-```
 
-- To install Node Version Manager (`nvm`), also use Homebrew
-
-```bash
-brew install nvm
-```
-
-**Note**: I had some issues with nvm not being added to my path, so if after installing you still cannot run `nvm -v`, add it to your path and try again
-
-```bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-```
-
-- To install Yarn, also use Homebrew
-
-```bash
+# Install Yarn
 brew install yarn
 ```
 
-- If you do not have Homebrew on your mac, I would highly recommend installing it [here](https://brew.sh/).
+## Getting Started
 
-### Steps
+1. Clone the repository
 
-1. First, start by cloning this repository to your local machine
+   ```bash
+   git clone https://github.com/matthew-collett/cec2025.git
+   cd cec2025
+   ```
 
-```bash
-git clone https://github.com/swe4103/swe4103-project.git
-```
+2. Place the provided environment files in their respective directories:
 
-2. Navigate into the project directory
+   - Place the `api/.env` file in the root of the `api` directory
+   - Place the `ui/.env` file in the root of the `ui` directory
 
-```bash
-cd swe4103-project
-```
+3. Place the Firebase service account key file:
+   - Copy the provided `firebase-service-account.json` file to the root of the `api` directory. Make sure it is named the same as `firebase-service-account.json`
 
-3. Copy the `.env.example` file and populate with valid credentials. Please reach out to any of the development leads for valid credentials.
+These configuration files contain necessary credentials and settings required for the application to function properly.
 
-```bash
-cp api/.env.exmaple api/.env
-```
+4. Set up the project (installs all dependencies)
+   ```bash
+   make setup
+   ```
 
-4. Install and use the version of node specified in the `.nvmrc` file by running the following commands
+## Running the Application
 
-```bash
-nvm install
-nvm use
-```
-
-5. Install the necessary dependencies
+### Start UI only
 
 ```bash
-yarn install
+make ui
 ```
 
-6. At this point, you can run either just the client (frontend React.js application), just the server (backend Express.js API), or you can run them concurrently, communicating with eachother
+UI will be available at http://localhost:5173
 
-**Client**
+### Start API only
 
 ```bash
-yarn run client
+make api
 ```
 
-Client application should be running at `http://localhost:5173`
+API will be available at http://localhost:5000
 
-**Server (API)**
+### Start both UI and API
 
 ```bash
-yarn run api
+make run
 ```
 
-API server application should be running at `http://localhost:3000`
-
-**Both**
+## Other Useful Commands
 
 ```bash
-yarn run dev
-```
+# Stop running API processes
+make kill-api
 
-This will run both the client and the API server concurrently communicating with eachother in the foreground.
+# Clean up build artifacts and dependencies
+make clean
+```
