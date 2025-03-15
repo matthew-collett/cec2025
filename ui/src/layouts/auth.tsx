@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion'
 import { Outlet, useLocation } from 'react-router-dom'
 
-import Cuate from '@/assets/storyset/ev-cuate.svg'
-import Pana from '@/assets/storyset/ev-pana.svg'
+import Amico from '@/assets/storyset/amico.svg'
+import Rafiki from '@/assets/storyset/rafiki.svg'
 import { Card, CardContent, Image } from '@/components/ui'
 
 export const AuthLayout = () => {
@@ -39,7 +39,7 @@ export const AuthLayout = () => {
                 transition={{ type: 'tween', duration: 0.3 }}
               >
                 <Image
-                  src={isRegister ? Cuate : Pana}
+                  src={isRegister ? Amico : Rafiki}
                   alt="Electric Vehicle"
                   className="absolute inset-0 h-full w-full object-contain dark:brightness-[0.8]"
                 />

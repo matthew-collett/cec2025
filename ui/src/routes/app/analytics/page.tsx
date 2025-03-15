@@ -47,15 +47,20 @@ const AnalyticsPage = () => {
 
         const token = await user.getIdToken()
         const response = await api.get(`/get-predictions/${user.uid}`, token)
-        if (response.data) {
+
+        // Handle any response format and treat invalid/empty as just empty
+        if (response.data && Array.isArray(response.data) && response.data.length > 0) {
           const predictions = response.data as PredictionResponse[]
           setPredictions(predictions)
-          if (predictions.length > 0) {
-            setSelectedBatchId(predictions[0].batchId)
-          }
+          setSelectedBatchId(predictions[0].batchId)
+        } else {
+          // If no data or invalid format, just set to empty array
+          setPredictions([])
         }
       } catch (err) {
         console.error('Error fetching predictions:', err)
+        // Treat any error as just empty data for UI purposes
+        setPredictions([])
       } finally {
         setLoading(false)
       }
@@ -65,7 +70,9 @@ const AnalyticsPage = () => {
   }, [])
 
   // Get the selected batch data
-  const selectedBatch = predictions.find(p => p.batchId === selectedBatchId)
+  const selectedBatch = selectedBatchId
+    ? predictions.find(p => p.batchId === selectedBatchId)
+    : undefined
 
   // Prepare pie chart data for tumor distribution
   const pieChartData = selectedBatch
@@ -99,6 +106,10 @@ const AnalyticsPage = () => {
 
   // Prepare detection percentage over time data
   const getDetectionTimelineData = () => {
+    if (!predictions || predictions.length === 0) {
+      return [] // Return empty array if no predictions
+    }
+
     return predictions
       .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
       .map(batch => {
@@ -149,7 +160,9 @@ const AnalyticsPage = () => {
             <CardContent className="pt-6">
               <div className="text-center p-6">
                 <h3 className="font-semibold text-lg mb-2">No uploads found</h3>
-                <p className="text-muted-foreground">Upload files to see analysis results here.</p>
+                <p className="text-muted-foreground">
+                  Upload some files to see analysis results here.
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -171,155 +184,184 @@ const AnalyticsPage = () => {
               </Select>
             </div>
 
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Total Files</CardTitle>
-                  <CardDescription>In selected upload</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{totalCount}</div>
-                </CardContent>
-              </Card>
+            {selectedBatch && (
+              <>
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle>Total Files</CardTitle>
+                      <CardDescription>In selected upload</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold">{totalCount}</div>
+                    </CardContent>
+                  </Card>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Tumors Detected</CardTitle>
-                  <CardDescription>Positive results</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{tumorCount}</div>
-                </CardContent>
-              </Card>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle>Tumors Detected</CardTitle>
+                      <CardDescription>Positive results</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold">{tumorCount}</div>
+                    </CardContent>
+                  </Card>
 
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle>Detection Rate</CardTitle>
-                  <CardDescription>Percentage of positive results</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">{tumorPercentage}%</div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid gap-6 md:grid-cols-2">
-              {/* Pie Chart */}
-              <Card className="flex flex-col">
-                <CardHeader className="items-center pb-0">
-                  <CardTitle>Results Distribution</CardTitle>
-                  <CardDescription>Tumor vs. No Tumor Detection</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1 pb-0">
-                  <ChartContainer
-                    config={pieChartConfig}
-                    className="mx-auto aspect-square max-h-[250px]"
-                  >
-                    <PieChart>
-                      <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                      <Pie
-                        data={pieChartData}
-                        dataKey="count"
-                        nameKey="category"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={80}
-                      />
-                    </PieChart>
-                  </ChartContainer>
-                </CardContent>
-                <CardFooter className="flex-col gap-2 text-sm">
-                  <div className="flex items-center gap-2 font-medium leading-none">
-                    {isTumorRateHigh ? (
-                      <>
-                        High tumor detection rate <TrendingUp className="h-4 w-4 text-red-500" />
-                      </>
-                    ) : (
-                      <>
-                        Low tumor detection rate <TrendingDown className="h-4 w-4 text-green-500" />
-                      </>
-                    )}
-                  </div>
-                  <div className="leading-none text-muted-foreground">
-                    {tumorPercentage}% of files show tumor detection
-                  </div>
-                </CardFooter>
-              </Card>
-
-              {/* Timeline Chart */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Detection Rate Timeline</CardTitle>
-                  <CardDescription>Percentage of tumors detected over time</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ChartContainer config={timelineChartConfig}>
-                    <LineChart
-                      accessibilityLayer
-                      data={timelineData}
-                      margin={{
-                        left: 12,
-                        right: 12,
-                      }}
-                    >
-                      <CartesianGrid vertical={false} />
-                      <XAxis dataKey="date" tickLine={false} axisLine={false} tickMargin={8} />
-                      <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                      <Line
-                        dataKey="percentage"
-                        type="natural"
-                        stroke="hsl(var(--chart-1))"
-                        strokeWidth={2}
-                        dot={true}
-                      />
-                    </LineChart>
-                  </ChartContainer>
-                </CardContent>
-                <CardFooter className="flex-col items-start gap-2 text-sm">
-                  <div className="leading-none text-muted-foreground">
-                    Tumor detection rates across all uploads
-                  </div>
-                </CardFooter>
-              </Card>
-            </div>
-
-            {/* File Details Table */}
-            <Card>
-              <CardHeader>
-                <CardTitle>File Details</CardTitle>
-                <CardDescription>Individual analysis results</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="max-h-96 overflow-y-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr>
-                        <th className="text-left p-2 border-b">Filename</th>
-                        <th className="text-left p-2 border-b">Result</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedBatch?.predictions.map((prediction, index) => (
-                        <tr key={index} className={index % 2 === 0 ? 'bg-muted/50' : ''}>
-                          <td className="p-2">{prediction.filename}</td>
-                          <td className="p-2">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs ${
-                                prediction.hasTumor
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-green-100 text-green-800'
-                              }`}
-                            >
-                              {prediction.hasTumor ? 'Tumor Detected' : 'No Tumor'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <CardTitle>Detection Rate</CardTitle>
+                      <CardDescription>Percentage of positive results</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-3xl font-bold">{tumorPercentage}%</div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
+
+                <div className="grid gap-6 md:grid-cols-2">
+                  {/* Pie Chart */}
+                  <Card className="flex flex-col">
+                    <CardHeader className="items-center pb-0">
+                      <CardTitle>Results Distribution</CardTitle>
+                      <CardDescription>Tumor vs. No Tumor Detection</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex-1 pb-0">
+                      <ChartContainer
+                        config={pieChartConfig}
+                        className="mx-auto aspect-square max-h-[250px]"
+                      >
+                        <PieChart>
+                          <ChartTooltip
+                            cursor={false}
+                            content={<ChartTooltipContent hideLabel />}
+                          />
+                          <Pie
+                            data={pieChartData}
+                            dataKey="count"
+                            nameKey="category"
+                            cx="50%"
+                            cy="50%"
+                            outerRadius={80}
+                          />
+                        </PieChart>
+                      </ChartContainer>
+                    </CardContent>
+                    <CardFooter className="flex-col gap-2 text-sm">
+                      <div className="flex items-center gap-2 font-medium leading-none">
+                        {isTumorRateHigh ? (
+                          <>
+                            High tumor detection rate{' '}
+                            <TrendingUp className="h-4 w-4 text-red-500" />
+                          </>
+                        ) : (
+                          <>
+                            Low tumor detection rate{' '}
+                            <TrendingDown className="h-4 w-4 text-green-500" />
+                          </>
+                        )}
+                      </div>
+                      <div className="leading-none text-muted-foreground">
+                        {tumorPercentage}% of files show tumor detection
+                      </div>
+                    </CardFooter>
+                  </Card>
+
+                  {/* Timeline Chart */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Detection Rate Timeline</CardTitle>
+                      <CardDescription>Percentage of tumors detected over time</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      {timelineData.length > 0 ? (
+                        <ChartContainer config={timelineChartConfig}>
+                          <LineChart
+                            accessibilityLayer
+                            data={timelineData}
+                            margin={{
+                              left: 12,
+                              right: 12,
+                            }}
+                          >
+                            <CartesianGrid vertical={false} />
+                            <XAxis
+                              dataKey="date"
+                              tickLine={false}
+                              axisLine={false}
+                              tickMargin={8}
+                            />
+                            <ChartTooltip
+                              cursor={false}
+                              content={<ChartTooltipContent hideLabel />}
+                            />
+                            <Line
+                              dataKey="percentage"
+                              type="natural"
+                              stroke="hsl(var(--chart-1))"
+                              strokeWidth={2}
+                              dot={true}
+                            />
+                          </LineChart>
+                        </ChartContainer>
+                      ) : (
+                        <div className="flex items-center justify-center h-48">
+                          <p className="text-muted-foreground">Not enough data for timeline</p>
+                        </div>
+                      )}
+                    </CardContent>
+                    <CardFooter className="flex-col items-start gap-2 text-sm">
+                      <div className="leading-none text-muted-foreground">
+                        Tumor detection rates across all uploads
+                      </div>
+                    </CardFooter>
+                  </Card>
+                </div>
+
+                {/* File Details Table */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>File Details</CardTitle>
+                    <CardDescription>Individual analysis results</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="max-h-96 overflow-y-auto">
+                      {selectedBatch.predictions && selectedBatch.predictions.length > 0 ? (
+                        <table className="w-full">
+                          <thead>
+                            <tr>
+                              <th className="text-left p-2 border-b">Filename</th>
+                              <th className="text-left p-2 border-b">Result</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {selectedBatch.predictions.map((prediction, index) => (
+                              <tr key={index} className={index % 2 === 0 ? 'bg-muted/50' : ''}>
+                                <td className="p-2">{prediction.filename}</td>
+                                <td className="p-2">
+                                  <span
+                                    className={`px-2 py-1 rounded-full text-xs ${
+                                      prediction.hasTumor
+                                        ? 'bg-red-100 text-red-800'
+                                        : 'bg-green-100 text-green-800'
+                                    }`}
+                                  >
+                                    {prediction.hasTumor ? 'Tumor Detected' : 'No Tumor'}
+                                  </span>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      ) : (
+                        <div className="text-center py-8">
+                          <p className="text-muted-foreground">No files in this upload</p>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </>
         )}
       </div>

@@ -46,7 +46,7 @@ const RegisterPage = () => {
   const onSubmit = async (values: RegisterFormValues) => {
     try {
       await register(values.email, values.password)
-      navigate('/dashboard')
+      navigate('/app/dashboard')
     } catch (error) {
       form.setError('root', {
         message: error instanceof Error ? error.message : 'Registration failed. Please try again.',

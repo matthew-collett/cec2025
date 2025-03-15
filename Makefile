@@ -1,9 +1,11 @@
 ifeq ($(OS),Windows_NT)
 	# Windows-specific settings
+	PYTHON = python
 	VENV_ACTIVATE = $(VENV)/Scripts/activate
 	RM = rmdir /s /q
 else
 	# Unix-specific settings
+	PYTHON = python3.10
 	VENV_ACTIVATE = $(VENV)/bin/activate
 	RM = rm -rf
 endif
