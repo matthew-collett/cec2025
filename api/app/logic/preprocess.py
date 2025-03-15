@@ -1,10 +1,12 @@
 import os
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from app.logic.config import DATASET_PATH, IMG_SIZE, BATCH_SIZE
+from config import DATASET_PATH, IMG_SIZE, BATCH_SIZE
+
 
 def load_data(validation_split=0.2):
     """ Load and preprocess training and validation datasets. """
-    datagen = ImageDataGenerator(rescale=1.0 / 255.0, validation_split=validation_split)
+    datagen = ImageDataGenerator(
+        rescale=1.0 / 255.0, validation_split=validation_split)
 
     train_generator = datagen.flow_from_directory(
         DATASET_PATH,

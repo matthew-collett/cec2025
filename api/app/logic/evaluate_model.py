@@ -1,8 +1,9 @@
 import numpy as np
 import tensorflow as tf
 from sklearn.metrics import classification_report, confusion_matrix
-from app.logic.preprocess import load_data
-from app.logic.config import MODEL_PATH, STATS_PATH
+from preprocess import load_data
+from config import MODEL_PATH, STATS_PATH
+
 
 def evaluate_model():
     """ Load trained model, test on dataset, compute & save metrics. """
@@ -11,7 +12,8 @@ def evaluate_model():
 
     y_true = validation_generator.classes
     y_pred_prob = model.predict(validation_generator)
-    y_pred = (y_pred_prob > 0.5).astype(int).flatten()  # Convert probabilities to binary labels
+    # Convert probabilities to binary labels
+    y_pred = (y_pred_prob > 0.5).astype(int).flatten()
 
     # Compute confusion matrix
     tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()

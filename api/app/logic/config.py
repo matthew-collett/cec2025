@@ -10,7 +10,7 @@ import os
 # TEST_PATH = os.path.join(DATASET_PATH, "CEC_test")
 
 # Model Path
-MODEL_PATH = "app/logic/model/brain_tumor_classifier.h5"
+MODEL_PATH = "app/logic/model/brain_tumor_classifier_backup.h5"
 STATS_PATH = "app/logic/model_statistics.txt"
 
 # Image Processing

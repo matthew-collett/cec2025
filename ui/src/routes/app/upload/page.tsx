@@ -51,12 +51,12 @@ const UploadPage = () => {
   // Function to export prediction data as CSV
   const exportToCsv = (prediction: PredictionResponse) => {
     // Create CSV header
-    const headers = ['Filename', 'Result']
+    const headers = ['Image', 'Tumor present?']
 
     // Create CSV rows from predictions
     const rows = prediction.predictions.map(pred => [
       `"${pred.filename}"`,
-      pred.hasTumor ? 'Tumor Detected' : 'No Tumor Detected',
+      pred.hasTumor ? 'yes' : 'no',
     ])
 
     // Combine header and rows
@@ -182,6 +182,7 @@ const UploadPage = () => {
       addFiles(Array.from(e.dataTransfer.files))
     }
   }
+
   const handleSubmit = async () => {
     if (files.length === 0 || isUploading) return
     setIsUploading(true)
@@ -197,7 +198,6 @@ const UploadPage = () => {
       const batchId = crypto.randomUUID()
       const token = await user.getIdToken()
       const MAX_CHUNK_SIZE = 100
-      const allResults: PredictionResponse[] = []
 
       // Split files into chunks of 100
       const fileChunks = []
@@ -217,8 +217,8 @@ const UploadPage = () => {
 
             const response = await api.post(`/predict/${user.uid}`, token, chunkFormData)
 
-            if (response && response.data) {
-              allResults.push(response.data as PredictionResponse)
+            if (response.status !== 200) {
+              throw new Error('Prediction failed')
             }
           } catch (chunkError) {
             console.error(`Error processing chunk ${index + 1}:`, chunkError)
@@ -227,11 +227,14 @@ const UploadPage = () => {
         }),
       )
 
-      if (allResults.length > 0) {
+      const predictionsResponse = await api.get(`/get-predictions/${user.uid}`, token)
+
+      if (predictionsResponse.status === 200 && predictionsResponse.data) {
+        const predictions = predictionsResponse.data as PredictionResponse[]
         // Add all new predictions to our list and switch to history tab
         setPredictions(prev => {
           // Add all new results to the array
-          const updatedPredictions = [...prev, ...allResults]
+          const updatedPredictions = [...prev, ...predictions]
           // Sort by timestamp in descending order (newest first)
           return updatedPredictions.sort((a, b) => {
             const dateA = new Date(a.timestamp)
@@ -354,53 +357,57 @@ const UploadPage = () => {
                   <div className="flex items-center justify-between">
                     <h4 className="font-medium">Selected Images ({files.length})</h4>
                     <p className="text-sm text-muted-foreground">
-                      {files.length === 1
-                        ? '1 file selected'
-                        : `${files.length} files selected (max 100)`}
+                      {files.length === 1 ? '1 file selected' : `${files.length} files selected`}
                     </p>
                   </div>
 
                   <div className="rounded-md border">
-                    <table className="w-full caption-bottom text-sm">
-                      <thead>
-                        <tr className="border-b bg-muted/50">
-                          <th className="h-10 w-12 px-4 text-left align-middle font-medium"></th>
-                          <th className="h-10 px-4 text-left align-middle font-medium">
-                            File Name
-                          </th>
-                          <th className="h-10 px-4 text-left align-middle font-medium">Size</th>
-                          <th className="h-10 w-12 px-4 text-left align-middle font-medium"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {files.map(file => (
-                          <tr key={file.id} className="border-b">
-                            <td className="p-2 align-middle">
-                              <div className="h-10 w-10 overflow-hidden rounded-md border">
-                                <img
-                                  src={file.preview}
-                                  alt={file.file.name}
-                                  className="h-full w-full object-cover"
-                                />
-                              </div>
-                            </td>
-                            <td className="p-4 align-middle">
-                              <span className="font-medium">{file.file.name}</span>
-                            </td>
-                            <td className="p-4 align-middle">
-                              <span className="text-muted-foreground">
-                                {formatFileSize(file.file.size)}
-                              </span>
-                            </td>
-                            <td className="p-2 align-middle">
-                              <Button variant="ghost" size="sm" onClick={() => removeFile(file.id)}>
-                                <X className="h-4 w-4" />
-                              </Button>
-                            </td>
+                    <div className="max-h-96 overflow-y-auto">
+                      <table className="w-full caption-bottom text-sm">
+                        <thead className="sticky top-0 z-10 bg-background">
+                          <tr className="border-b bg-muted/50">
+                            <th className="h-10 w-12 px-4 text-left align-middle font-medium"></th>
+                            <th className="h-10 px-4 text-left align-middle font-medium">
+                              File Name
+                            </th>
+                            <th className="h-10 px-4 text-left align-middle font-medium">Size</th>
+                            <th className="h-10 w-12 px-4 text-left align-middle font-medium"></th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {files.map(file => (
+                            <tr key={file.id} className="border-b">
+                              <td className="p-2 align-middle">
+                                <div className="h-10 w-10 overflow-hidden rounded-md border">
+                                  <img
+                                    src={file.preview}
+                                    alt={file.file.name}
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
+                              </td>
+                              <td className="p-4 align-middle">
+                                <span className="font-medium">{file.file.name}</span>
+                              </td>
+                              <td className="p-4 align-middle">
+                                <span className="text-muted-foreground">
+                                  {formatFileSize(file.file.size)}
+                                </span>
+                              </td>
+                              <td className="p-2 align-middle">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => removeFile(file.id)}
+                                >
+                                  <X className="h-4 w-4" />
+                                </Button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
               )}
