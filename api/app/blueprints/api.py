@@ -120,36 +120,27 @@ def get_predictions(uid):
         uploads = DATEBASE_SERVICE.query_items(query, PREDICTION_CONTAINER)
 
         if uploads:
-            # Create a dictionary to group predictions by batchId
             batched_uploads = {}
 
             for upload in uploads:
                 batch_id = upload.get('batchId')
 
-                # If no batchId exists or it's None, treat as a standalone upload
                 if not batch_id:
-                    # Use timestamp as a unique key for non-batched uploads
                     key = upload.get('timestamp', str(uuid.uuid4()))
                     batched_uploads[key] = upload
                     continue
 
-                # For uploads with batchId
                 if batch_id in batched_uploads:
-                    # Merge predictions from the same batch
                     existing_predictions = batched_uploads[batch_id]['predictions']
                     new_predictions = upload.get('predictions', [])
 
-                    # Combine prediction lists
                     batched_uploads[batch_id]['predictions'] = existing_predictions + \
                         new_predictions
                 else:
-                    # First entry with this batchId
                     batched_uploads[batch_id] = upload
 
-            # Convert back to list
             merged_uploads = list(batched_uploads.values())
 
-            # Sort by timestamp (newest first)
             merged_uploads.sort(key=lambda x: x.get(
                 'timestamp', ''), reverse=True)
 
@@ -159,4 +150,22 @@ def get_predictions(uid):
 
     except Exception as e:
         print(f"Error fetching predictions: {str(e)}")
+        return jsonify({'message': 'An error occurred'}), 500
+
+@bp.reoute('/delete-prediction/<predictionid>', methods=['DELETE'])
+@token_required
+def delete_prediction(predictionid):
+    if predictionid is None:
+        return jsonify({'message': 'Unauthorized'}), 401
+    try:
+        query_builder = QueryBuilder()
+        query_builder.where('id', predictionid)
+        query = query_builder.build()
+        uploads = DATEBASE_SERVICE.query_items(query, PREDICTION_CONTAINER)
+        if uploads:
+            for upload in uploads:
+                DATEBASE_SERVICE.delete_item(upload['id'], PREDICTION_CONTAINER)
+            return jsonify({'message': 'Predictions deleted'}), 200
+        return jsonify({'message': 'No predictions found'}), 404
+    except Exception as e:
         return jsonify({'message': 'An error occurred'}), 500
