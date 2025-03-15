@@ -6,8 +6,10 @@
 ## 🧭 Table of Contents
 
 - [CEC 2025](#cec2025)
+
   - [Table of Contents](#-table-of-contents)
   - [Team](#-team)
+  - [Tech Stack](#-tech-stack)
   - [Directory Structure](#-directory-structure)
   - [Local Run](#-local-run)
     - [Prerequisites](#prerequisites)
@@ -23,6 +25,32 @@
 | Cooper Dickson  | Backend/AI Developer       |
 | Alex Groom      | Backend/Database Developer |
 | Aidan Foster    | Backend/AI Developer       |
+
+## 🛠️ Tech Stack
+
+### Frontend
+
+- [**React.js**](https://react.dev/)
+  - Frontend JavaScript/Typescript library
+- [**TypeScript**](https://www.typescriptlang.org/)
+  - Strongly typed programming language that builds on JavaScript
+- [**Tailwind**](https://tailwindcss.com/)
+  - CSS framework
+- [**shadcn/ui**](https://ui.shadcn.com/)
+  - Beautifully designed components built with Radix UI and Tailwind CSS
+
+### Backend
+
+- [**Python**](https://www.python.org/)
+  - High-level programming language for backend development
+- [**Cosmos DB**](https://azure.microsoft.com/en-us/products/cosmos-db)
+  - Microsoft's globally distributed, multi-model database service
+- [**Flask**](https://pythonbasics.org/flask-rest-api/)
+  - Lightweight Python web framework for building APIs
+- [**Google Firebase**](https://firebase.google.com/)
+  - Platform for developing web and mobile applications
+- [**Tensorflow**](https://www.tensorflow.org/)
+  - Open-source machine learning framework
 
 ## 🏗️ Directory Structure
 
