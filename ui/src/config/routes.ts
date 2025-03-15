@@ -35,18 +35,18 @@ const protectedRoutes: AppRoute[] = [
     component: () => import('@/routes/app/dashboard'),
   },
   {
-    title: 'Analyze',
-    path: 'analyze',
+    title: 'Upload',
+    path: 'upload',
     icon: FileChartColumnIncreasing,
-    description: 'Upload and analyze your MRI scans',
-    component: () => import('@/routes/app/analyze'),
+    description: 'Upload and view your MRI scans',
+    component: () => import('@/routes/app/upload'),
   },
   {
-    title: 'Charts',
-    path: 'charts',
+    title: 'Analytics',
+    path: 'analytics',
     icon: ChartColumnDecreasing,
-    description: 'View data infromation for an upload',
-    component: () => import('@/routes/app/charts'),
+    description: 'View analytics and data infromation for you uploads',
+    component: () => import('@/routes/app/analytics'),
   },
 ]
 

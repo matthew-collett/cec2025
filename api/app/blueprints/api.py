@@ -152,7 +152,8 @@ def get_predictions(uid):
         print(f"Error fetching predictions: {str(e)}")
         return jsonify({'message': 'An error occurred'}), 500
 
-@bp.reoute('/delete-prediction/<predictionid>', methods=['DELETE'])
+
+@bp.route('/delete-prediction/<predictionid>', methods=['DELETE'])
 @token_required
 def delete_prediction(predictionid):
     if predictionid is None:
@@ -164,7 +165,8 @@ def delete_prediction(predictionid):
         uploads = DATEBASE_SERVICE.query_items(query, PREDICTION_CONTAINER)
         if uploads:
             for upload in uploads:
-                DATEBASE_SERVICE.delete_item(upload['id'], PREDICTION_CONTAINER)
+                DATEBASE_SERVICE.delete_item(
+                    upload['id'], PREDICTION_CONTAINER)
             return jsonify({'message': 'Predictions deleted'}), 200
         return jsonify({'message': 'No predictions found'}), 404
     except Exception as e:

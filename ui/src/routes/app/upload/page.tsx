@@ -38,7 +38,7 @@ type UploadedFile = {
   preview: string
 }
 
-const AnalyzePage = () => {
+const UploadPage = () => {
   const location = useLocation()
   const [files, setFiles] = useState<UploadedFile[]>([])
   const [isDragging, setIsDragging] = useState(false)
@@ -560,4 +560,4 @@ const AnalyzePage = () => {
   )
 }
 
-export default AnalyzePage
+export default UploadPage
