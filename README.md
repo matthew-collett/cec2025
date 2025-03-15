@@ -84,6 +84,7 @@ It is recommended that this program is run on a MacOS device. We had mixed outco
 
 - **Python 3.10**
 - **Node.js** and **Yarn**
+- **Git LFS installed**
 
 ### Verifying installations
 
@@ -100,6 +101,7 @@ yarn -v
 - Download Python 3.10 from the [official website](https://www.python.org/downloads/release/python-3100/)
 - Download Node.js from the [official website](https://nodejs.org/)
 - Install Yarn: `npm install -g yarn`
+- Look it up
 
 #### macOS
 
@@ -112,6 +114,9 @@ brew install node
 
 # Install Yarn
 brew install yarn
+
+# Install Git LFS
+brew install git-lfs
 ```
 
 ## Getting Started
@@ -128,22 +133,35 @@ git clone https://github.com/matthew-collett/cec2025.git
 cd cec2025
 ```
 
-3. Place the provided environment files in their respective directories:
+3. Initialize Git LFS
+
+```bash
+git lfs install
+```
+
+4. Pull Model
+
+```bash
+git lfs pull
+```
+
+5. Place the provided environment files in their respective directories:
 
    - In the root of `api/` directory, create a new file named `.env` and paste in the provided api credentials. Make sure to save the file
    - In the root of `ui/` directory, create a new file named `.env` and paste in the provided firebase credentials. Make sure to save the file
 
-4. Place the Firebase service account key file:
+6. Place the Firebase service account key file:
    - Copy the provided `firebase-service-account.json` file to the root of the `api` directory. Make sure it is named the same as `firebase-service-account.json`
 
 These configuration files contain necessary credentials and settings required for the application to function properly.
 
 Now, make sure you are in root directory (`cec2025`) before running. In other words, the same directory as the `Makefile`
 
-5. Set up the project (installs all dependencies)
-   ```bash
-   make setup
-   ```
+6. Set up the project (installs all dependencies)
+
+```bash
+make setup
+```
 
 ## Running the Application
 
