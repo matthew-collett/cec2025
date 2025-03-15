@@ -11,7 +11,6 @@ else
 endif
 
 # Basic commands - override if needed
-PYTHON = python3.10
 PIP = pip3
 VENV = api/venv
 YARN = yarn
