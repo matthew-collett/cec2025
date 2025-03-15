@@ -80,6 +80,8 @@
 
 ## Prerequisites
 
+It is recommended that this program is run on a MacOS device. We had mixed outcomes when running on windows due to a tensor flow version conflict, however Mac always seemed to run smoothly.
+
 - **Python 3.10**
 - **Node.js** and **Yarn**
 
